@@ -129,59 +129,123 @@ export default function Home() {
     getPlaces();
   };
 
-  const addEvent = async () => {
-    if (!eventTitle || !eventTime || !selectedPlace) {
-      alert("Please complete all fields");
-      return;
-    }
+	const addEvent = async () => {
+	  if (!eventTitle || !eventTime || !selectedPlace) {
+		alert("Please complete all fields");
+		return;
+	  }
 
-    const { error } = await supabase.from("events").insert({
-      title: eventTitle,
-      description: eventDescription,
-      event_time: new Date(eventTime).toISOString(),
-      place_id: selectedPlace,
-      created_by: user.id,
-    });
+	  const { error } = await supabase.from("events").insert({
+		title: eventTitle,
+		description: eventDescription,
+		event_time: new Date(eventTime).toISOString(),
+		place_id: selectedPlace,
+		created_by: user.id,
+	  });
 
-    if (error) {
-      alert(error.message);
-      return;
-    }
+	  if (error) {
+		alert(error.message);
+		return;
+	  }
 
-    setEventTitle("");
-    setEventDescription("");
-    setEventTime("");
-    setSelectedPlace("");
+	  const { data: tokenData } = await supabase
+		.from("notification_tokens")
+		.select("token");
 
-    getEvents();
-    setTab("home");
-  };
+	  const tokens = tokenData?.map((x) => x.token) || [];
 
-  const joinEvent = async (eventId: string) => {
-    const { error } = await supabase
-      .from("event_participants")
-      .insert({
-        event_id: eventId,
-        user_id: user.id,
-      });
+	  await fetch("/api/send-notification", {
+		method: "POST",
+		headers: {
+		  "Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+		  tokens,
+		  title: "New Billiard Event",
+		  message: `${user.user_metadata.full_name} created ${eventTitle}`,
+		}),
+	  });
 
-    if (error) {
-      alert("Already joined");
-      return;
-    }
+	  setEventTitle("");
+	  setEventDescription("");
+	  setEventTime("");
+	  setSelectedPlace("");
 
-    getEvents();
-  };
+	  getEvents();
+	  setTab("home");
+	};
 
-  const unjoinEvent = async (eventId: string) => {
-    await supabase
-      .from("event_participants")
-      .delete()
-      .eq("event_id", eventId)
-      .eq("user_id", user.id);
+	const joinEvent = async (eventId: string) => {
+	  const event = events.find((e) => e.id === eventId);
 
-    getEvents();
-  };
+	  const { error } = await supabase
+		.from("event_participants")
+		.insert({
+		  event_id: eventId,
+		  user_id: user.id,
+		});
+
+	  if (error) {
+		alert("Already joined");
+		return;
+	  }
+
+	  if (event?.created_by !== user.id) {
+		const { data: tokenData } = await supabase
+		  .from("notification_tokens")
+		  .select("token")
+		  .eq("user_id", event.created_by);
+
+		const tokens = tokenData?.map((x) => x.token) || [];
+
+		await fetch("/api/send-notification", {
+		  method: "POST",
+		  headers: {
+			"Content-Type": "application/json",
+		  },
+		  body: JSON.stringify({
+			tokens,
+			title: "Player Joined",
+			message: `${user.user_metadata.full_name} joined ${event.title}`,
+		  }),
+		});
+	  }
+
+	  getEvents();
+	};
+
+	const unjoinEvent = async (eventId: string) => {
+	  const event = events.find((e) => e.id === eventId);
+
+	  await supabase
+		.from("event_participants")
+		.delete()
+		.eq("event_id", eventId)
+		.eq("user_id", user.id);
+
+	  if (event?.created_by !== user.id) {
+		const { data: tokenData } = await supabase
+		  .from("notification_tokens")
+		  .select("token")
+		  .eq("user_id", event.created_by);
+
+		const tokens = tokenData?.map((x) => x.token) || [];
+
+		await fetch("/api/send-notification", {
+		  method: "POST",
+		  headers: {
+			"Content-Type": "application/json",
+		  },
+		  body: JSON.stringify({
+			tokens,
+			title: "Player Unjoined",
+			message: `${user.user_metadata.full_name} left ${event.title}`,
+		  }),
+		});
+	  }
+
+	  getEvents();
+	};
 
   const loginWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
@@ -223,31 +287,7 @@ export default function Home() {
       {tab === "home" && (
         <div className="p-5">
           <h2 className="text-xl font-bold mb-4">Future Events</h2>
-		  <button
-		  onClick={async () => {
-			const { data } = await supabase
-			  .from("notification_tokens")
-			  .select("token");
-
-			const tokens = data?.map((x) => x.token) || [];
-
-			await fetch("/api/send-notification", {
-			  method: "POST",
-			  headers: {
-				"Content-Type": "application/json",
-			  },
-			  body: JSON.stringify({
-				tokens,
-				title: "Kuy BL",
-				message: "Push notification test",
-			  }),
-			});
-		  }}
-		  className="bg-blue-600 px-4 py-2 rounded-xl cursor-pointer"
-		>
-		  Test Notification
-		</button>
-
+		 
           <div className="flex flex-col gap-3">
             {events.map((event) => {
               const joined =
