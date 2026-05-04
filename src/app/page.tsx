@@ -293,7 +293,7 @@ export default function Home() {
                         onClick={() => joinEvent(event.id)}
                         className="bg-white text-black px-4 py-2 rounded-xl text-sm font-semibold"
                       >
-                        Join
+                        join
                       </button>
                     )}
                   </div>
