@@ -277,10 +277,10 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white pb-24">
       <div className="p-5 border-b border-zinc-800">
-        <h1 className="text-2xl font-bold">Kuy BL</h1>
+        <h1 className="text-2xl font-bold cursor-pointer">Kuy BL</h1>
 
         <p className="text-zinc-400 text-sm mt-1">
-          Billiard Event Scheduler
+          gas BL lah, masa engga
         </p>
       </div>
 

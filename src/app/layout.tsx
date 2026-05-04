@@ -3,6 +3,7 @@ import "./globals.css";
 export const metadata = {
   title: "Kuy BL",
   description: "Billiard Event App",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
