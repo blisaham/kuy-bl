@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { getFirebaseMessaging } from "../lib/firebase";
+import { getToken } from "firebase/messaging";
 import BottomNav from "../components/BottomNav";
 
 export default function Home() {
@@ -23,6 +25,7 @@ export default function Home() {
     getUser();
     getPlaces();
     getEvents();
+	requestNotificationPermission();
 
     const channel = supabase
       .channel("events-realtime")
@@ -59,6 +62,31 @@ export default function Home() {
     const { data } = await supabase.auth.getUser();
     setUser(data.user);
   };
+  
+  const requestNotificationPermission = async () => {
+  try {
+    const permission = await Notification.requestPermission();
+
+    if (permission === "granted") {
+		const messaging = await getFirebaseMessaging();
+
+		if (!messaging) return;
+
+		const token = await getToken(messaging, {
+		  vapidKey: "BJ1BUtXdxym6uwJYwRE0H0_A1b5Ch256mXARe9sjASHT8X905ipwNgWxX79Rq1lbYYhKK5fgRETFbq3H-JzqDXQ",
+		});
+
+      console.log("FCM TOKEN:", token);
+
+		await supabase.from("notification_tokens").upsert({
+		  user_id: user?.id,
+		  token,
+		});
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   const getPlaces = async () => {
     const { data } = await supabase
