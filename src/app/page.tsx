@@ -203,20 +203,32 @@ export default function Home() {
     setUser(null);
   };
 
-  if (!user) {
-    return (
-      <main className="min-h-screen flex items-center justify-center bg-black text-white">
-        <button
-          onClick={() =>
-            supabase.auth.signInWithOAuth({ provider: "google" })
-          }
-          className="bg-white text-black px-6 py-3 rounded-xl font-semibold cursor-pointer"
-        >
-          Login with Google
-        </button>
-      </main>
-    );
-  }
+	if (!user) {
+	  return (
+		<main className="min-h-screen flex flex-col items-center justify-center bg-black text-white">
+		  
+		  <img
+			src="/icon-192.png"
+			className="w-24 h-24 rounded-full mb-4"
+		  />
+
+		  <h1 className="text-2xl font-bold">Kuy BL</h1>
+
+		  <p className="text-zinc-400 text-sm mt-1 mb-6">
+			gas BL lah, masa engga!
+		  </p>
+
+		  <button
+			onClick={() =>
+			  supabase.auth.signInWithOAuth({ provider: "google" })
+			}
+			className="bg-white text-black px-6 py-3 rounded-xl font-semibold cursor-pointer"
+		  >
+			Login with Google
+		  </button>
+		</main>
+	  );
+	}
 
   // ✅ FILTER LOGIC (NEW)
   const filteredEvents = events.filter((event) => {
