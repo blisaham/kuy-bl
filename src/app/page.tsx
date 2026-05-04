@@ -202,7 +202,7 @@ export default function Home() {
       <main className="min-h-screen flex items-center justify-center bg-black text-white">
         <button
           onClick={loginWithGoogle}
-          className="bg-white text-black px-6 py-3 rounded-xl font-semibold"
+          className="bg-white text-black px-6 py-3 rounded-xl font-semibold cursor-pointer"
         >
           Login with Google
         </button>
@@ -243,7 +243,7 @@ export default function Home() {
 			  }),
 			});
 		  }}
-		  className="bg-blue-600 px-4 py-2 rounded-xl"
+		  className="bg-blue-600 px-4 py-2 rounded-xl cursor-pointer"
 		>
 		  Test Notification
 		</button>
@@ -284,16 +284,16 @@ export default function Home() {
                     {joined ? (
                       <button
                         onClick={() => unjoinEvent(event.id)}
-                        className="bg-red-600 px-4 py-2 rounded-xl text-sm font-semibold"
+                        className="bg-red-600 px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer"
                       >
-                        un-join
+                        Batal Join
                       </button>
                     ) : (
                       <button
                         onClick={() => joinEvent(event.id)}
-                        className="bg-white text-black px-4 py-2 rounded-xl text-sm font-semibold"
+                        className="bg-white text-black px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer"
                       >
-                        join
+                        Kuy Join
                       </button>
                     )}
                   </div>
@@ -346,7 +346,7 @@ export default function Home() {
 
             <button
               onClick={addEvent}
-              className="bg-white text-black rounded-xl py-3 font-semibold"
+              className="bg-white text-black rounded-xl py-3 font-semibold cursor-pointer"
             >
               Create Event
             </button>
@@ -375,7 +375,7 @@ export default function Home() {
 
             <button
               onClick={addPlace}
-              className="bg-white text-black rounded-xl py-3 font-semibold"
+              className="bg-white text-black rounded-xl py-3 font-semibold cursor-pointer"
             >
               Save Place
             </button>
@@ -419,7 +419,7 @@ export default function Home() {
 
             <button
               onClick={logout}
-              className="bg-white text-black rounded-xl py-3 px-6 font-semibold mt-6"
+              className="bg-white text-black rounded-xl py-3 px-6 font-semibold mt-6 cursor-pointer"
             >
               Logout
             </button>
