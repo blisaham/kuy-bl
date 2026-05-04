@@ -26,6 +26,10 @@ export default function Home() {
     getPlaces();
     getEvents();
 	requestNotificationPermission();
+	
+	if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js");
+	}
 
     const channel = supabase
       .channel("events-realtime")
