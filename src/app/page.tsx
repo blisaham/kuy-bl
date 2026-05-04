@@ -223,6 +223,30 @@ export default function Home() {
       {tab === "home" && (
         <div className="p-5">
           <h2 className="text-xl font-bold mb-4">Future Events</h2>
+		  <button
+		  onClick={async () => {
+			const { data } = await supabase
+			  .from("notification_tokens")
+			  .select("token");
+
+			const tokens = data?.map((x) => x.token) || [];
+
+			await fetch("/api/send-notification", {
+			  method: "POST",
+			  headers: {
+				"Content-Type": "application/json",
+			  },
+			  body: JSON.stringify({
+				tokens,
+				title: "Kuy BL",
+				message: "Push notification test",
+			  }),
+			});
+		  }}
+		  className="bg-blue-600 px-4 py-2 rounded-xl"
+		>
+		  Test Notification
+		</button>
 
           <div className="flex flex-col gap-3">
             {events.map((event) => {
@@ -262,7 +286,7 @@ export default function Home() {
                         onClick={() => unjoinEvent(event.id)}
                         className="bg-red-600 px-4 py-2 rounded-xl text-sm font-semibold"
                       >
-                        Unjoin
+                        un-join
                       </button>
                     ) : (
                       <button
